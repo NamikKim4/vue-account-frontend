@@ -2,10 +2,11 @@
 export default {
 
   components: {
+
   },
-  computed: {
+  computed:{
   },
-  props: ['periodList'],
+  props: ["periodList"],
   data(){
     return {
       columns: [
@@ -24,18 +25,18 @@ export default {
   },
   methods:{
     onRowSelected(items) {
-      console.log('items@@@@@@@@@', items)
-      this.$emit('selected', items)
-    },
+      console.log("items@@@@@@@@@", items);
+      this.$emit('selected', items);
+    }
   },
-  mounted(){
+  mounted() {
   },
 }
 </script>
 
 <template>
   <div>
-    <VTable>
+    <v-table
       :fields="columns"
       :items="periodList"
       responsive="lg"
@@ -43,9 +44,10 @@ export default {
       selectable
       select-mode="single"
       @row-clicked="onRowSelected"
-    </VTable>
+    >
+    </v-table>
   </div>
 </template>
 
-<style scoped>
-</style>
+  <style scoped>
+  </style>

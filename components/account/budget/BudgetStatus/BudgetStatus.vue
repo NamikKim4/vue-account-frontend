@@ -1,25 +1,3 @@
-<!-- <script>
-import  BudgetStatus from "components/account/budget/BudgetStatus/BudgetStatus.vue";
-export default {
-  components: {
-    BudgetStatus,
-  },
-
-  methods : {
-
-  },
-}
-</script>
-
-<template>
-  <div>
-    <BudgetStatus />
-  </div>
-</template>
-
-<style scoped>
-</style> -->
-
 <script>
 import { mapActions, mapState } from "vuex";
 import moment from "moment";
@@ -27,7 +5,6 @@ import vSelect from 'vue-select'
 import { VueGoodTable } from "vue-good-table";
 // import SearchYearModal from "components/account/budget/BudgetRequest/SearchYearModal.vue";
 import { workplaceList } from "@/components/api/account/budget";
-import { VAutocomplete } from "vuetify/lib/components/index.mjs";
 
 export default {
   name: "BudgetStatusPage.vue",
@@ -35,8 +12,7 @@ export default {
     // SearchYearModal,
     vSelect,
     VueGoodTable,
-    VAutocomplete
-},
+  },
 
   computed:{
     ...mapState('account/budget', ['periodList', 'workplaceList', 'deptList', 'searchBudgetStatus', 'searchComparisonBudget']),
@@ -217,57 +193,21 @@ export default {
 </script>
 
 <template>
-  <!-- 페이지 메인 타이틀 -->
-  <h2>예산 실적 현황</h2>
-  <!-- 첫번째 컴포넌트 -->
   <div>
     <v-row>
       <v-col md="3">
-        <v-text-field
-          ref="inputYear"
-          v-model="year"
-          placeholder="회계연도"
-          class="form-control"
+        <v-form-group
           label="회계연도"
-        ></v-text-field>
-
-        <VDialog
-          v-model="isDialogVisible"
-          width="500"
+          label-for="period"
         >
-          <template #activator="{ props }">
-            <IconBtn
-              class="me-1"
-              @click="Shepherd.activeTour?.cancel()"
-            >
-              <VIcon
-                v-bind="props"
-                size="26"
-                icon="tabler-search"
-              />
-            </IconBtn>
-          </template>
-          <DialogCloseBtn @click="isDialogVisible = !isDialogVisible" />
-          <!-- Dialog Content -->
-          <VCard title="회계년도">
-            <VContainer>
-              <VDataTable
-                :key="(row) => row.id"
-                :headers="headers3"
-                :items="yeardata"
-                :items-per-page="5"
-                selectable
-                select-mode="single"
-                @click:row="onSelected"
-              />
-              <VCardText class="d-flex justify-end">
-                <VBtn @click="isDialogVisible = false">
-                  OK
-                </VBtn>
-              </VCardText>
-            </VContainer>
-          </VCard>
-        </VDialog>
+          <v-form-input
+            id="period"
+            ref="inputYear"
+            v-model="year"
+            placeholder="회계연도"
+            class="form-control"
+          />
+        </v-form-group>
       </v-col>
 
       <p class="h4 mb-4">
@@ -279,19 +219,19 @@ export default {
           label="사업장명"
           label-for="workplaceName"
         >
-          <VAutocomplete
+          <v-form-select
             id="workplaceName"
             v-model="workplaceCode"
             @change="updateDeptList"
           >
-            <template
+            <v-form-select-option
               v-for="(item, index) in workplaceList"
               :key="index"
               :value="item.workplaceCode"
             >
               {{ item.workplaceName }}
-            </template>
-          </VAutocomplete>
+            </v-form-select-option>
+          </v-form-select>
         </v-form-group>
       </v-col>
 
