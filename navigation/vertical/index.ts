@@ -105,7 +105,7 @@ export default [
       },
       {
         title: "예산 실적 현황",
-        to: { name: "hr-attendreg-daily" },
+        to: { name: "account-budget-BudgetStatusPage" },
       },
     ],
   },
