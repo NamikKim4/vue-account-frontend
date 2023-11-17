@@ -35,7 +35,7 @@ export default {
 
 <template>
   <div>
-    <b-table>
+    <VTable>
       :fields="columns"
       :items="periodList"
       responsive="lg"
@@ -43,11 +43,9 @@ export default {
       selectable
       select-mode="single"
       @row-clicked="onRowSelected"
-    </b-table>
+    </VTable>
   </div>
 </template>
 
-<style>
-  <style scoped>
-{}
+<style scoped>
 </style>
