@@ -65,6 +65,15 @@
             </v-col>
 
             <v-col>
+              <v-text-field
+                placeholder="계정과목명"
+                v-model="accountName"
+                label="계정과목명"
+                disabled
+              ></v-text-field>
+            </v-col>
+
+            <v-col>
               <VDialog v-model="isDialogVisible2" width="500">
                 <template #activator="{ props }">
                   <IconBtn class="me-1" @click="Shepherd.activeTour?.cancel()">
@@ -101,6 +110,7 @@
               :items="accountCodeListTest"
               :items-per-page="4"
               @click:row="onSelected4"
+              :class="{ 'selected-row': selectedRow === item }"
             ></VDataTable>
           </v-row>
         </v-form>
@@ -111,10 +121,18 @@
     <!-- 두 번째 카드 -->
     <v-col md="6">
       <v-card class="mb-6" title="계정상세선택">
+        <v-col>
+          <v-text-field
+            placeholder="계정과목"
+            v-model="accountNameTest"
+            label="계정과목"
+            disabled
+          ></v-text-field>
+        </v-col>
         <VDataTable
           :headers="headers"
           :items="detailAccountList"
-          :items-per-page="6"
+          :items-per-page="5"
           @click:row="onSelected5"
         ></VDataTable>
       </v-card>
@@ -173,7 +191,7 @@
         </VCol>
 
         <VCol cols="12" class="d-flex gap-4">
-          <VBtn type="submit"> Submit </VBtn>
+          <VBtn @click="insertBudget"> Submit </VBtn>
 
           <VBtn type="reset" color="secondary" variant="tonal"> Reset </VBtn>
         </VCol>
@@ -201,6 +219,10 @@ const month9 = ref("");
 const month10 = ref("");
 const month11 = ref("");
 const month12 = ref("");
+
+const selectedRow = ref(null);
+
+const accountPeriodNo = ref("");
 const year = ref(null);
 const workplaceName = ref(null);
 const workplaceName2 = ref(null);
@@ -209,10 +231,14 @@ const dept_list = ref([]);
 const yeardata = ref([]);
 const selectedYear = ref("");
 const deptName = ref("");
+const deptCode = ref("");
 const deptInfo = ref([]);
 const accountCodeListTest = ref([]);
 const accountInnerCode = ref("");
 const detailAccountList = ref([]);
+const accountInnerInnerCode = ref("");
+const accountName = ref("");
+const accountNameTest = ref("");
 
 const headers = [
   { title: "계정과목코드", sortable: false, key: "accountInnerCode" },
@@ -225,6 +251,7 @@ const headers2 = [
 const headers3 = [
   { title: "회계 시작일자", sortable: false, key: "periodStartDate" },
   { title: "회계 종료일자", key: "periodEndDate" },
+  { title: "기간번호", key: "accountPeriodNo" },
 ];
 const headers4 = [
   { title: "사업장코드", sortable: false, key: "workplaceCode" },
@@ -277,6 +304,7 @@ const fetchData3 = async (workplaceCode2) => {
     console.log("response", response);
     deptInfo.value = response.data.detailDeptList;
     deptName.value = response.data.detailDeptList.deptName;
+    deptCode.value = response.data.detailDeptList.deptCode;
     return response.data.detailDeptList;
   } catch (error) {
     console.error("Error fetching data:", error);
@@ -305,6 +333,7 @@ const onSelected = (selected, a) => {
   const startDate = new Date(a.internalItem.columns.periodStartDate);
   const endDate = new Date(a.internalItem.columns.periodEndDate);
   year.value = startDate.getFullYear();
+  accountPeriodNo.value = a.internalItem.columns.accountPeriodNo;
 };
 
 const onSelected2 = (selected, b) => {
@@ -318,18 +347,24 @@ const onSelected2 = (selected, b) => {
 
 const onSelected3 = (selected, c) => {
   deptName.value = c.internalItem.columns.deptName;
+  deptCode.value = c.internalItem.columns.deptCode;
   console.log("c", c);
   fetchData4();
 };
 
 const onSelected4 = (selected, d) => {
   accountInnerCode.value = d.internalItem.columns.accountInnerCode;
+  accountName.value = d.internalItem.columns.accountName;
+
   console.log("d", d);
   fetchData5(accountInnerCode.value);
 };
 
 const onSelected5 = (selected, e) => {
-  //accountInnerCode.value = d.internalItem.columns.accountInnerCode;
+  selectedRow.value = selected;
+  accountInnerInnerCode.value = e.internalItem.columns.accountInnerCode;
+  accountNameTest.value = e.internalItem.columns.accountName;
+
   console.log("e", e);
 };
 
@@ -363,10 +398,54 @@ const fetchData5 = async (accountInnerCode) => {
   }
 };
 
+const insertBudget = async () => {
+  const data = {
+    deptCode: deptCode.value,
+    workplaceCode: workplaceCode2.value,
+    accountPeriodNo: accountPeriodNo.value,
+    accountInnerCode: accountInnerInnerCode.value,
+    budgetingCode: "1",
+    m1Budget: month1.value,
+    m2Budget: month2.value,
+    m3Budget: month3.value,
+    m4Budget: month4.value,
+    m5Budget: month5.value,
+    m6Budget: month6.value,
+    m7Budget: month7.value,
+    m8Budget: month8.value,
+    m9Budget: month9.value,
+    m10Budget: month10.value,
+    m11Budget: month11.value,
+    m12Budget: month12.value,
+  };
+
+  if (Object.values(data).some((dataValue) => dataValue == "")) {
+    alert("월별 신청값을 입력해 주십시오");
+  } else {
+    console.log(Object.values(data));
+    try {
+      const response = await axios.post(
+        "http://localhost:8282/acc/budget/registerBudget",
+        data
+      );
+      console.log(response);
+    } catch (error) {
+      // axios.post에서 발생한 오류는 이곳에서 잡히게 됩니다.
+      console.error("Error in insertBudget:", error);
+      throw error; // 오류를 다시 던져서 상위 호출자에게 전달합니다.
+    }
+    alert("저장되었습니다");
+  }
+};
+
 onMounted(async () => {
   yeardata.value = await fetchData();
   workplaceName.value = await fetchData2();
 });
 </script>
 
-<style></style>
+<style scoped>
+.selected-row {
+  background-color: #f0f0f0; /* Set the desired background color */
+}
+</style>
