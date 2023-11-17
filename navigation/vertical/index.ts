@@ -97,15 +97,19 @@ export default [
     children: [
       {
         title: "예산 신청",
-        to: { name: "hr-salbase-extManage" },
+        to: { name: "account-budget-BudgetRequest-InsertBudget" },
       },
       {
         title: "예산 편성",
-        to: { name: "hr-salbase-socialInsure" },
+        to: { name: "account-budget-BudgetFormulation-BudgetFormulationPage" },
       },
       {
         title: "예산 실적 현황",
+<<<<<<< HEAD
         to: { name: "account-budget-BudgetStatusPage" },
+=======
+        to: { name: "account-budget-BudgetStatus-BudgetStatusPage" },
+>>>>>>> 108df3c1710063c976be16aed9bcbe4ce603b7ae
       },
     ],
   },
