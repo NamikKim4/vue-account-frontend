@@ -3,7 +3,7 @@
   <v-row>
     <!-- 첫 번째 카드 -->
     <v-col md="6">
-      <v-card class="mb-6" title="계정과목선택">
+      <v-card class="mb-6" title="계정과목선택" style="height: 100%;">
         <v-form>
           <!-- 첫 번째 컴포넌트 -->
           <v-row>
@@ -120,7 +120,7 @@
 
     <!-- 두 번째 카드 -->
     <v-col md="6">
-      <v-card class="mb-6" title="계정상세선택">
+      <v-card class="mb-6" title="계정상세선택" style="height: 100%;">
         <v-col>
           <v-text-field
             placeholder="계정과목"
