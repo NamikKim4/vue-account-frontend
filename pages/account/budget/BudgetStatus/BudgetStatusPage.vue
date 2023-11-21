@@ -1,345 +1,237 @@
-<!-- <script>
-import  BudgetStatus from "components/account/budget/BudgetStatus/BudgetStatus.vue";
-export default {
-  components: {
-    BudgetStatus,
-  },
+<script setup lang="ts">
+import moment from 'moment'
+import { ref } from 'vue'
+import { useStore } from 'vuex' // Vue 3에서는 useStore를 사용합니다.
 
-  methods : {
+const store = useStore() // useStore를 사용하여 Vuex store에 액세스합니다.
 
-  },
+// ref를 사용하여 데이터를 정의합니다.
+const isDialogVisible = ref(false)
+const isDialogVisible2 = ref(false)
+
+const periodList = ref([])
+const workplaceList = ref([])
+const deptList = ref([])
+const searchBudgetStatus = ref([])
+const searchComparisonBudget = ref([])
+const filteredDeptList = ref([])
+
+const year = ref('')
+const accountPeriodNo = ref('')
+const workplaceCode = ref('')
+const workplaceName = ref('')
+const deptName = ref('')
+const deptCode = ref('')
+
+const tableData = ref([])
+const selectedIndex = ref(-1) // 선택된 행의 인덱스
+const hoveredIndex = ref(-1) // 마우스가 위에 있을 때 행의 인덱스
+const sum_budgetStatus = ref([])
+const sum_abr = ref('')
+const sum_annualBudget = ref('')
+const sum_remainingBudget = ref('')
+const budgetExecRate = ref('')
+const sum_ambr = ref('')
+const sum_budget = ref('')
+const sum_remainingMonthBudget = ref('')
+const monthBudgetExecRate = ref('')
+
+const columns = [
+  { label: '구분', key: 'budgetDate' },
+  { label: '신청예산', key: 'appBudget' },
+  { label: '편성예산', key: 'orgBudget' },
+  { label: '집행실적', key: 'execPerform' },
+  { label: '예실대비', key: 'budgetAccountComparison' },
+]
+
+const headers3 = [
+  { title: '회계 시작일자', sortable: false, key: 'periodStartDate' },
+  { title: '회계 종료일자', key: 'periodEndDate' },
+  { title: '기간번호', key: 'accountPeriodNo' },
+]
+
+const headers4 = [
+  { title: '사업장코드', sortable: false, key: 'workplaceCode' },
+  { title: '사업장명', key: 'workplaceName' },
+]
+
+const headers5 = [
+  { title: '부서코드', sortable: false, key: 'deptCode' },
+  { title: '부서명', key: 'deptName' },
+]
+
+/* 예산기수조회 */
+const onSelected = (selected: any, a: any) => {
+  console.log('a', a)
+  console.log('a', a.internalItem.columns.periodStartDate)
+  console.log('a', a.internalItem.columns.periodEndDate)
+
+  const startDate = new Date(a.internalItem.columns.periodStartDate)
+  const endDate = new Date(a.internalItem.columns.periodEndDate)
+
+  year.value = startDate.getFullYear()
+
+  accountPeriodNo.value = a.internalItem.columns.accountPeriodNo
 }
+
+// const onSelected = (selected: any) => {
+//   let year = moment(selected.periodStartDate).format('YYYY');
+//   year.value = year + '년';
+
+//   let periodNo = selected.accountPeriodNo;
+//   periodNo.value = periodNo;
+// };
+
+/* 사업장 선택시 부서조회 */
+// const updateDeptList = (list: any) => {
+//   const data = { workplaceCode: list };
+//   store.dispatch('account/budget/SEARCH_DEPT_LIST', data);
+// }
 </script>
 
-<template>
-  <div>
-    <BudgetStatus />
-  </div>
-</template>
-
-<style scoped>
-</style> -->
-
-<script>
-import { mapActions, mapState } from "vuex";
-import moment from "moment";
-import vSelect from 'vue-select'
-import { VueGoodTable } from "vue-good-table";
-// import SearchYearModal from "components/account/budget/BudgetRequest/SearchYearModal.vue";
-import { workplaceList } from "@/components/api/account/budget";
-import { VAutocomplete } from "vuetify/lib/components/index.mjs";
-
-export default {
-  name: "BudgetStatusPage.vue",
-  components:{
-    // SearchYearModal,
-    vSelect,
-    VueGoodTable,
-    VAutocomplete
-},
-
-  computed:{
-    ...mapState('account/budget', ['periodList', 'workplaceList', 'deptList', 'searchBudgetStatus', 'searchComparisonBudget']),
-    filteredDeptList() {
-    // 필터링 로직 구현 (예: 검색어에 따라 필터링하는 경우)
-      return this.deptList
-    },
-  },
-  created() {
-    this.SEARCH_PERIOD_LIST()
-    this.SEARCH_WORKPLACE_LIST()
-  },
-  data(){
-    return {
-      year:'',
-      periodNo: '',
-      workplaceCode:'',
-      workplaceName:'',
-      deptName:'',
-      deptCode:'',
-
-      tableData:[],
-      selectedIndex: -1, // 선택된 행의 인덱스
-      hoveredIndex: -1, // 마우스가 위에 있을 때의 행의 인덱스
-      sum_budgetStatus:[],
-      sum_abr:'',
-      sum_annualBudget : '',
-      sum_remainingBudget : '',
-      budgetExecRate:'',
-      sum_ambr: '',
-      sum_budget:'',
-      sum_remainingMonthBudget:'',
-      monthBudgetExecRate:'',
-      columns:[
-        {
-          label:'구분',
-          key:'budgetDate'
-        },
-        {
-          label: '신청예산',
-          key:'appBudget'
-        },
-        {
-          label:'편성예산',
-          key:'orgBudget',
-        },
-        {
-          label:'집행실적',
-          key:'execPerform'
-        },
-        {
-          label:'예실대비',
-          key:'budgetAccountComparison'
-        }
-      ],
-    }
-  },
-
-  methods:{
-    ...mapActions('account/budget', ['SEARCH_PERIOD_LIST', 'SEARCH_DEPT_LIST', 'SEARCH_WORKPLACE_LIST', 'SEARCH_BUDGET_STATUS_REQUEST', 'SEARCH_COMPARISON_BUDGET']),
-
-    // *예산기수조회*
-    onSelected(selected) {
-      console.log('selected', selected);
-      let year = moment(selected.periodStartDate).format('YYYY');
-      this.year = year+'년';
-
-      let periodNo = selected.accountPeriodNo
-      this.periodNo = periodNo
-    },
-
-    // *사업장 선택시 부서조회*
-    updateDeptList(list) {
-      console.log("list",list);
-
-      const data = { workplaceCode: list }
-
-      console.log("workplaceList",list);
-
-      this.SEARCH_DEPT_LIST(data)
-    },
-
-    // 예산실적조회 버튼 실행
-    async searchBudget() {
-      const data = {
-        periodNo: this.periodNo,
-        workplaceCode: this.workplaceCode,
-        deptCode: this.deptCode,
-      }
-
-      await this.SEARCH_BUDGET_STATUS_REQUEST(data)
-
-      // this.budgetStatus = this.$store.state.searchBudgetStatus;
-      console.log('searchBudgetStatus 값 나오나', this.searchBudgetStatus)
-
-      this.getPinnedBottomRowData(this.searchBudgetStatus);
-    },
-
-    getPinnedBottomRowData(budgetStatus) {
-      console.log('budgetStatus', budgetStatus);
-
-      if (!budgetStatus)
-        return [];
-
-      let sum_abr = 0;
-      let sum_annualBudget = 0;
-      let sum_remainingBudget = 0;
-      let sum_ambr = 0;
-      let sum_budget = 0;
-      let sum_remainingMonthBudget = 0;
-
-      for (let i = 0; i < budgetStatus.length; i++) {
-        sum_abr += budgetStatus[i].abr;
-        sum_annualBudget += budgetStatus[i].annualBudget;
-        sum_remainingBudget += budgetStatus[i].remainingBudget;
-        sum_ambr += budgetStatus[i].ambr;
-        sum_budget += budgetStatus[i].monthBudget;
-        sum_remainingMonthBudget += budgetStatus[i].remainingMonthBudget;
-      }
-      this.sum_abr = sum_abr
-      this.sum_annualBudget = sum_annualBudget
-      this.sum_remainingBudget = sum_remainingBudget
-      this.budgetExecRate = sum_annualBudget == NaN ? "-" : ((sum_abr / sum_annualBudget) * 100).toFixed(3)
-
-      // this.budgetExecRate=budgetExecRate
-      this.sum_ambr = sum_ambr
-      this.sum_budget = sum_budget
-      this.sum_remainingMonthBudget = sum_remainingMonthBudget
-      this.monthBudgetExecRate = sum_budget == NaN ? "-" : ((sum_ambr / sum_budget) * 100).toFixed(3)
-
-      if (!sum_abr){this.sum_abr=0}
-      if (!sum_annualBudget){this.sum_annualBudget=0}
-      if (!sum_remainingBudget){this.sum_remainingBudget=0}
-      if (!sum_ambr){this.sum_ambr=0}
-      if (!sum_budget){this.sum_budget=0}
-      if (!sum_remainingMonthBudget){this.sum_remainingMonthBudget=0}
-
-    // this.sum_budgetStatus.push({
-    //   // accountInnerCode: "합계",
-    //   // accountName: null,
-    //   abr: sum_abr,
-    //   annualBudget: sum_annualBudget,
-    //   remainingBudget: sum_remainingBudget,
-    //   budgetExecRate: sum_annualBudget == null ? "-" : ((sum_abr / sum_annualBudget) * 100).toFixed(3),
-    //   ambr: sum_ambr,
-    //   monthBudget: sum_budget,
-    //   remainingMonthBudget: sum_remainingMonthBudget,
-    //   monthBudgetExecRate: sum_budget == 0 ? "-" : ((sum_ambr / sum_budget) * 100).toFixed(3),
-    // });
-    // console.log('here',this.sum_budgetStatus)
-    // console.log(this.sum_budgetStatus[0].abr);
-    // return this.sum_budgetStatus;
-    },
-
-    rowSelect(select) {
-      console.log('클릭이벤트 실행', select)
-      console.log('값', this.periodNo)
-      console.log('row클릭 값', select.accountInnerCode)
-
-      let data = {
-        periodNo: this.periodNo,
-        workplaceCode: this.workplaceCode,
-        deptCode: this.deptCode,
-        accountCode: select.accountInnerCode
-      }
-      this.SEARCH_COMPARISON_BUDGET(data);
-    },
-
-  },
-
-  // 데이터 변경시
-  watch: {
-    workplaceName() {
-      this.updateDeptList()
-    },
-  },
-}
-</script>
-
+<!-- UI 출력 템플릿 설정 -->
 <template>
   <!-- 페이지 메인 타이틀 -->
   <h2>예산 실적 현황</h2>
   <!-- 첫번째 컴포넌트 -->
   <div>
-    <v-row>
-      <v-col md="3">
-        <v-text-field
-          ref="inputYear"
-          v-model="year"
-          placeholder="회계연도"
-          class="form-control"
-          label="회계연도"
-        ></v-text-field>
-
-        <VDialog
-          v-model="isDialogVisible"
-          width="500"
+    <VCard class="mt-2">
+      <v-row>
+        <v-col 
+          class="mt-4"
+          cols="12"
+          md="2"
         >
-          <template #activator="{ props }">
-            <IconBtn
-              class="me-1"
-              @click="Shepherd.activeTour?.cancel()"
-            >
-              <VIcon
-                v-bind="props"
-                size="26"
-                icon="tabler-search"
-              />
-            </IconBtn>
-          </template>
-          <DialogCloseBtn @click="isDialogVisible = !isDialogVisible" />
-          <!-- Dialog Content -->
-          <VCard title="회계년도">
-            <VContainer>
-              <VDataTable
-                :key="(row) => row.id"
-                :headers="headers3"
-                :items="yeardata"
-                :items-per-page="5"
-                selectable
-                select-mode="single"
-                @click:row="onSelected"
-              />
-              <VCardText class="d-flex justify-end">
-                <VBtn @click="isDialogVisible = false">
-                  OK
-                </VBtn>
-              </VCardText>
-            </VContainer>
-          </VCard>
-        </VDialog>
-      </v-col>
+          <v-text-field
+            ref="inputYear"
+            v-model="year"
+            placeholder="회계연도"
+            class="form-control"
+            label="회계연도"
+          />
+        </v-col>
 
-      <p class="h4 mb-4">
-        <v-icon style="height: 70px;" icon="search" v-b-modal.searchYear />
-      </p>
-
-      <v-col md="3">
-        <v-form-group
-          label="사업장명"
-          label-for="workplaceName"
+        <v-col
+          class="mt-4"
+          cols="12"
+          md="1"
         >
-          <VAutocomplete
-            id="workplaceName"
-            v-model="workplaceCode"
-            @change="updateDeptList"
+          <VDialog
+            v-model="isDialogVisible"
+            width="500"
           >
-            <template
-              v-for="(item, index) in workplaceList"
-              :key="index"
-              :value="item.workplaceCode"
-            >
-              {{ item.workplaceName }}
+            <template #activator="{ props }">
+              <IconBtn
+                class="me-1"
+                @click="Shepherd.activeTour?.cancel()"
+              >
+                <VIcon
+                  v-bind="props"
+                  size="26"
+                  icon="tabler-search"
+                />
+              </IconBtn>
             </template>
-          </VAutocomplete>
-        </v-form-group>
-      </v-col>
+            <DialogCloseBtn @click="isDialogVisible = !isDialogVisible" />
 
-      <v-col md="3">
-        <v-form-group
-          label="부서명"
-          label-for="deptName"
-        >
-          <v-form-select
-            id="deptName"
-            v-model="deptCode"
-          >
-            <v-form-select-option
-              v-for="(item, index) in filteredDeptList"
-              :key="index"
-              :value="item.deptCode"
-            >
-              {{ item.deptName }}
-            </v-form-select-option>
-          </v-form-select>
-        </v-form-group>
-      </v-col>
-      <p style="margin-top:20px;">
-        <v-button @click="searchBudget">예산실적조회</v-button>
-      </p>
-    </v-row>
-    <div>
-      <v-modal
-        id="searchYear"
-        cancel-variant="outline-secondary"
-        class="modal"
-      >
-        <v-card
-          class="scrollStyle"
-          title="회계년도"
-          style="margin:auto; overflow-y: scroll; height: 40vh;"
-        >
-          <!--
-            <search-year-modal
-            ref="searchYearModal"
-            modal-status="searchYear"
-            :periodList="periodList"
-            @selected="onSelected"
+            <!-- Dialog Content -->
+            <VCard title="회계연도">
+              <VContainer>
+                <VDataTable
+                  :key="(row) => row.id"
+                  :headers="headers3"
+                  :items="yeardata"
+                  :items-per-page="5"
+                  selectable
+                  select-mode="single"
+                  @click:row="onSelected"
+                />
+                <VCardText class="d-flex justify-end">
+                  <VBtn @click="isDialogVisible = false">
+                    OK
+                  </VBtn>
+                </VCardText>
+              </VContainer>
+            </VCard>
+          </VDialog>
+
+          <p class="h4 mb-4">
+            <VIcon
+              v-b-modal.searchYear
+              style="height: 70px;"
+              icon="search"
             />
-          -->
-        </v-card>
-      </v-modal>
-    </div>
+          </p>
+        </v-col>
+
+        <v-col
+          class="mt-4"
+          cols="12"
+          md="3">
+          <v-text-field
+            placeholder="사업장명"
+            v-model="workplaceName2"
+            label="사업장명"
+          />
+        </v-col>
+
+        <v-col
+          class="mt-4"
+          cols="12"
+          md="3"
+        >
+          <v-text-field
+            placeholder="부서명"
+            v-model="deptName"
+            label="부서명"
+          />
+        </v-col>
+        <v-col class="mt-4" cols="12" md="1">
+          <VDialog v-model="isDialogVisible2" width="500">
+            <template #activator="{ props }">
+              <IconBtn class="me-1" @click="Shepherd.activeTour?.cancel()">
+                <VIcon v-bind="props" size="26" icon="tabler-search" />
+              </IconBtn>
+            </template>
+
+            <DialogCloseBtn @click="isDialogVisible2 = !isDialogVisible2" />
+            <!-- Dialog Content -->
+            <VCard title="사업장/부서 선택">
+              <VContainer>
+                <VDataTable
+                  :headers="headers4"
+                  :items="workplaceName"
+                  :items-per-page="5"
+                  @click:row="onSelected2"
+                />
+                <VDataTable
+                  :headers="headers5"
+                  :items="deptInfo"
+                  :items-per-page="5"
+                  @click:row="onSelected3"
+                />
+
+                <VCardText class="d-flex justify-end">
+                  <VBtn @click="isDialogVisible2 = false"> OK </VBtn>
+                </VCardText>
+              </VContainer>
+            </VCard>
+          </VDialog>
+        </v-col>
+
+        <v-col
+          class="mb-1"
+          cols="12"
+          md="2"
+        >
+          <p style="margin-top:17px;">
+            <VBtn @click="searchBudget">
+              예산실적조회
+            </VBtn>
+          </p>
+        </v-col>
+      </v-row>
+    </VCard>
     <div>
       <table :show-footer="true">
         <thead>
@@ -445,15 +337,15 @@ export default {
       </table>
     </div>
     <div>
-      <br/>
+      <br>
+
       <h3>예산 실적 대비</h3>
       <v-table
         hover
         sticky-header="true"
         :items="searchComparisonBudget"
         :fields="columns"
-      >
-      </v-table>
+      />
     </div>
   </div>
 </template>
