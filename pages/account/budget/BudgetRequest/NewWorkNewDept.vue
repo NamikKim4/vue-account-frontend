@@ -47,16 +47,14 @@ const headers5 = [
 ];
 
 const onRowSelected2 = (selected, b) => {
-  console.log(selected);
-  console.log(b);
-  emits("selected2", { selected, b });
+  emits("selected2", { selected, b });//emits : 자식에서 부모로 보내는 
 };
 
+
 const onRowSelected3 = (selected, c) => {
-  console.log(selected);
-  console.log(c);
   emits("selected3", { selected, c });
 };
+
 
 const dialogToggle2 = () => {
   emits("dialogToggle2");

@@ -4,7 +4,7 @@
   <v-row>
     <!-- 첫 번째 카드 -->
     <v-col md="6">
-      <v-card class="mb-6" title="계정과목선택" style="height: 100%">
+      <v-card class="mb-6" title="계정과목선택🌲🌲🌲" style="height: 100%">
         <v-form>
           <!-- 첫 번째 컴포넌트 -->
           <v-row>
@@ -196,11 +196,15 @@ const headers2 = [
 //   }
 // };
 
+
+
 const searchYearData = async () => {
   await budgetStore().SEARCH_YEAR_DATA();
   yeardata.value = budgetStore().periodList;
   console.log("🌻🌻🌻", yeardata.value);
 };
+
+
 
 const searchDeptList = async () => {
   await budgetStore().SEARCH_DEPT_LIST();
@@ -246,6 +250,7 @@ watch(
 );
 
 const onSelected = ({ selected, a }) => {
+  console.log("selected🐰",selected)
   const startDate = new Date(a.internalItem.columns.periodStartDate);
   const endDate = new Date(a.internalItem.columns.periodEndDate);
   year.value = startDate.getFullYear();
