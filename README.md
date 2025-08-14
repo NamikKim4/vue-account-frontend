@@ -6,6 +6,13 @@ This template should help get you started developing with Vue 3 in Vite.
 
 [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) (and disable Vetur).
 
+## initial
+<img width="1457" height="817" alt="Image" src="https://github.com/user-attachments/assets/576ed0e4-f73b-4217-af85-e7655cf98e0e" />
+
+<img width="1466" height="835" alt="Image" src="https://github.com/user-attachments/assets/dda31e21-00ec-4c70-a853-c10f3cbdfd71" />
+
+<img width="1482" height="818" alt="Image" src="https://github.com/user-attachments/assets/ecd4ecd5-ef03-46b4-bddc-05752c72a622" />
+
 ## Type Support for `.vue` Imports in TS
 
 Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates.
