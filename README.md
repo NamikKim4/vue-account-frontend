@@ -7,9 +7,15 @@ This template should help get you started developing with Vue 3 in Vite.
 [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) (and disable Vetur).
 
 ## initial
-<img width="1457" height="817" alt="Image" src="https://github.com/user-attachments/assets/576ed0e4-f73b-4217-af85-e7655cf98e0e" />
+<p> 첫화면 </p>
+<img width="158" height="261" alt="Image" src="https://github.com/user-attachments/assets/b9f6251f-ee1d-482e-8b3c-c1075718bac3" />
 
-<img width="1466" height="835" alt="Image" src="https://github.com/user-attachments/assets/dda31e21-00ec-4c70-a853-c10f3cbdfd71" />
+<p> 예산 신청 </p>
+<img width="1307" height="737" alt="Image" src="https://github.com/user-attachments/assets/d1b229f0-778a-44fb-8914-4dc299669c70" />
+
+<p> 예산 편성 </p>
+<img width="1314" height="734" alt="Image" src="https://github.com/user-attachments/assets/789c821e-a349-4965-b5a7-296912a5260b" />
+<img width="1307" height="736" alt="Image" src="https://github.com/user-attachments/assets/690b58ec-1ae2-406e-ae55-f34c7d84b45a" />
 
 <img width="1482" height="818" alt="Image" src="https://github.com/user-attachments/assets/ecd4ecd5-ef03-46b4-bddc-05752c72a622" />
 
